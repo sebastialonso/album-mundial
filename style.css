@@ -327,6 +327,16 @@ main {
 
 /* ── Coverage ── */
 
+.coverage-info {
+  padding: 0.875rem 1.25rem;
+  background: #eff6ff;
+  border-bottom: 1px solid #bfdbfe;
+  font-size: 0.875rem;
+  color: #1e3a8a;
+  line-height: 1.55;
+  flex-shrink: 0;
+}
+
 .coverage-body { padding: 0.5rem 0; overflow-y: auto; }
 
 .coverage-row {

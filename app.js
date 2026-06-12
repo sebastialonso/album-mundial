@@ -97,10 +97,10 @@ function refreshSelectionPanel() {
   const items = Object.entries(editorSelection).filter(([, v]) => editorMode === 'catalog' ? v > 0 : v);
   const count = items.length;
 
-  let html = `<div class="panel-header">Selected <span class="panel-count">${count}</span></div>`;
+  let html = `<div class="panel-header">Seleccionadas <span class="panel-count">${count}</span></div>`;
 
   if (count === 0) {
-    html += `<div class="panel-empty">Click stickers to add them</div>`;
+    html += `<div class="panel-empty">Haz clic en las cartas para agregarlas</div>`;
   } else if (editorMode === 'catalog') {
     html += `<div class="panel-list">${items.map(([code, qty]) => `
       <div class="panel-item" data-code="${code}">
@@ -208,7 +208,7 @@ function filterGrid(term) {
     if (match) visible++;
   });
   const el = document.getElementById('filter-count');
-  if (el) el.textContent = `${visible} sticker${visible !== 1 ? 's' : ''}`;
+  if (el) el.textContent = `${visible} carta${visible !== 1 ? 's' : ''}`;
 }
 
 // --- Views ---
@@ -226,32 +226,32 @@ function showLanding() {
   document.getElementById('main').innerHTML = `
     <div class="landing">
       <div class="card">
-        <h2>My Catalog</h2>
+        <h2>Mi Álbum</h2>
         ${catalog
-          ? `<p class="stat">${ownedCount} owned &nbsp;&middot;&nbsp; ${extraCount} with extras</p>`
-          : `<p class="muted">No catalog yet</p>`}
+          ? `<p class="stat">${ownedCount} tengo &nbsp;&middot;&nbsp; ${extraCount} repetidas</p>`
+          : `<p class="muted">Aún no tienes álbum</p>`}
         <button class="btn" onclick="showCatalogEditor()">
-          ${catalog ? 'Update Catalog' : 'Create Catalog'}
+          ${catalog ? 'Actualizar Álbum' : 'Crear Álbum'}
         </button>
       </div>
 
       <div class="card">
-        <h2>My Missing List</h2>
+        <h2>Mis Faltantes</h2>
         ${missing
-          ? `<p class="stat">${missingCount} stickers missing</p>`
-          : `<p class="muted">No missing list yet</p>`}
+          ? `<p class="stat">${missingCount} cartas faltantes</p>`
+          : `<p class="muted">Aún no tienes lista de faltantes</p>`}
         <button class="btn" onclick="showMissingEditor()">
-          ${missing ? 'Update Missing List' : 'Create Missing List'}
+          ${missing ? 'Actualizar Faltantes' : 'Crear Lista de Faltantes'}
         </button>
       </div>
 
       <div class="card">
-        <h2>Find Stickers</h2>
+        <h2>Buscar Cartas</h2>
         ${missing
-          ? `<p class="muted">Find users who have your missing stickers</p>
-             <button class="btn" onclick="showCoverage()">Find Coverage</button>`
-          : `<p class="muted">Create a missing list first to find matches</p>
-             <button class="btn" disabled>Find Coverage</button>`}
+          ? `<p class="muted">Encuentra usuarios que tengan tus cartas faltantes</p>
+             <button class="btn" onclick="showCoverage()">Buscar</button>`
+          : `<p class="muted">Primero crea tu lista de faltantes</p>
+             <button class="btn" disabled>Buscar</button>`}
       </div>
     </div>
   `;
@@ -260,30 +260,30 @@ function showLanding() {
 function showCatalogEditor() {
   editorMode = 'catalog';
   editorSelection = { ...(getCatalog(currentUser) || {}) };
-  renderEditor('My Catalog', 'Qty', 'saveCatalogEditor()');
+  renderEditor('Mi Álbum', 'Cant.', 'saveCatalogEditor()');
 }
 
 function showMissingEditor() {
   editorMode = 'missing';
   const saved = getMissing(currentUser) || [];
   editorSelection = Object.fromEntries(saved.map(c => [c, true]));
-  renderEditor('My Missing List', 'Missing?', 'saveMissingEditor()');
+  renderEditor('Mis Faltantes', '¿Falta?', 'saveMissingEditor()');
 }
 
 function renderEditor(title, colLabel, saveAction) {
   document.getElementById('main').innerHTML = `
     <div class="editor">
       <div class="editor-header">
-        <button class="btn-secondary" onclick="showLanding()">Back</button>
+        <button class="btn-secondary" onclick="showLanding()">Volver</button>
         <h2>${title}</h2>
-        <button class="btn" onclick="${saveAction}">Save</button>
+        <button class="btn" onclick="${saveAction}">Guardar</button>
       </div>
       <div class="editor-body">
         <div class="grid-side">
           <div class="filter-bar">
-            <input id="filter" type="text" placeholder="Filter by code, team or name..."
+            <input id="filter" type="text" placeholder="Filtrar por código, equipo o nombre..."
               oninput="filterGrid(this.value)">
-            <span id="filter-count" class="filter-count">${STICKERS.length} stickers</span>
+            <span id="filter-count" class="filter-count">${STICKERS.length} cartas</span>
           </div>
           <div class="sticker-grid" id="sticker-grid">${renderGrid()}</div>
         </div>
@@ -324,14 +324,14 @@ function showCoverage() {
     }, [])
     .sort((a, b) => b.pct - a.pct);
 
-  const body = results.length === 0
-    ? `<p class="empty-state">No other users have extras matching your missing stickers yet.</p>`
+  const rows = results.length === 0
+    ? `<p class="empty-state">Ningún usuario tiene repetidas que coincidan con tus faltantes aún.</p>`
     : results.map(r => `
         <div class="coverage-row">
           <div class="coverage-meta">
             <span class="coverage-user">${r.user}</span>
             <span class="badge">${r.pct}%</span>
-            <span class="muted">${r.covered.length} of ${myMissing.length} stickers</span>
+            <span class="muted">${r.covered.length} de ${myMissing.length} cartas</span>
             <a class="sotos-btn" href="https://sotos.app" target="_blank" rel="noopener noreferrer">
               <img src="https://sotos.app/logo.png" alt="Sotos" class="sotos-logo"
                 onerror="this.style.display='none'">
@@ -346,11 +346,15 @@ function showCoverage() {
   document.getElementById('main').innerHTML = `
     <div class="editor">
       <div class="editor-header">
-        <button class="btn-secondary" onclick="showLanding()">Back</button>
-        <h2>Coverage Results</h2>
-        <span class="muted">${myMissing.length} stickers in your list</span>
+        <button class="btn-secondary" onclick="showLanding()">Volver</button>
+        <h2>Resultados</h2>
+        <span class="muted">${myMissing.length} cartas en tu lista</span>
       </div>
-      <div class="coverage-body">${body}</div>
+      <div class="coverage-info">
+        Acá verás qué usuarios quieren vender las cartas que te faltan. Puedes hacer la compra
+        directamente de manera segura a través de Sotos, el marketplace más bakan de Chile.
+      </div>
+      <div class="coverage-body">${rows}</div>
     </div>
   `;
 }
